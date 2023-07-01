@@ -1,24 +1,28 @@
-import logo from './logo.svg';
 import './App.css';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route
+} from "react-router-dom";
+import Box from '@mui/material/Box'
+
+import Header from './components/Header/Header';
+import RecordList from './components/RecordList/RecordList';
+import Report from './components/Report/Report';
+import Player from './components/Player/Player';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Box sx={{ height: '100vh' }}>
+        <Header />
+        <Routes>
+          <Route path="/" element={<RecordList />} />
+          <Route path="/reports" element={<Report />} />
+          <Route path="/player/:sessionId" element={<Player />} />
+        </Routes>
+      </Box>
+    </Router>
   );
 }
 
