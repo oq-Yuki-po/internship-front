@@ -12,15 +12,17 @@ import {
 } from '@material-ui/core';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@material-ui/icons';
 
-const PortSenssor = ({ ports }) => {
+const PortSenssor = ({ ports, maxHeight, onChange }) => {
     const [expanded, setExpanded] = React.useState(false);
 
     const handleExpandClick = () => {
+        var nextState = !expanded;
+        onChange(nextState);
         setExpanded(!expanded);
     };
 
     return (
-        < TableContainer component={Paper} >
+        < TableContainer component={Paper} style={{ maxHeight: `${maxHeight}px`, overflow: 'auto', minHeight: '50px' }} >
             <Table>
                 <TableBody>
                     <TableRow>
@@ -28,11 +30,11 @@ const PortSenssor = ({ ports }) => {
                             <IconButton size="small" onClick={handleExpandClick}>
                                 {expanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
                             </IconButton>
+                            ポート情報
                         </TableCell>
-                        <TableCell>ポート情報</TableCell>
                     </TableRow>
                     <Collapse in={expanded} unmountOnExit>
-                        <TableRow>
+                        <TableRow style={{ overflow: 'auto' }} >
                             <TableCell colSpan={2}>
                                 {/* ポート情報のテーブル */}
                                 <Table>

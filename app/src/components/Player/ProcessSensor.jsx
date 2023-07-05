@@ -12,27 +12,29 @@ import {
 } from '@material-ui/core';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@material-ui/icons';
 
-const ProcessSensor = ({ processes }) => {
+const ProcessSensor = ({ processes, maxHeight, onChange }) => {
     const [expanded, setExpanded] = React.useState(false);
 
     const handleExpandClick = () => {
+        var nextState = !expanded;
+        onChange(nextState);
         setExpanded(!expanded);
     };
 
     return (
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} style={{ maxHeight: `${maxHeight}px`, minHeight: '50px' }}>
             <Table>
                 <TableBody>
                     <TableRow>
-                        <TableCell>
+                        <TableCell >
                             <IconButton size="small" onClick={handleExpandClick}>
                                 {expanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
                             </IconButton>
+                            プロセス情報
                         </TableCell>
-                        <TableCell>プロセス情報</TableCell>
                     </TableRow>
                     <Collapse in={expanded} unmountOnExit>
-                        <TableRow>
+                        <TableRow style={{ overflow: 'auto' }}>
                             <TableCell colSpan={2}>
                                 {/* プロセス情報のテーブル */}
                                 <Table>
