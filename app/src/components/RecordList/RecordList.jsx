@@ -8,39 +8,28 @@ import { IconButton } from '@material-ui/core';
 
 const RecordList = () => {
     const navigate = useNavigate();
-    /*const [records, setRecords] = useState([]);
+    const [records, setRecords] = useState([]);
+    const fetchRecords = () => {
+        axios.get('http://localhost:8000/user_sessions')
+            .then(response => {
+                //console.trace();
+                //console.log('Records:', response.data.user_sessions);
+                setRecords(response.data.user_sessions);
+            }).catch(error => {
+                console.error('Error fetching records:', error);
+            });
+    };
 
     useEffect(() => {
-        const fetchRecords = async () => {
-            try {
-                const response = await axios.get('/api/records');
-                setRecords(response.data);
-            } catch (error) {
+        //console.trace();
+        //fetchRecords();
+        axios.get('http://localhost:8000/user_sessions')
+            .then(response => {
+                setRecords(response.data.user_sessions);
+            }).catch(error => {
                 console.error('Error fetching records:', error);
-            }
-        };
-
-        fetchRecords();
-    }, []);*/
-
-    const [records, setRecords] = useState([
-        {
-            id: 1,
-            startDate: '2023-07-01 09:00',
-            endDate: '2023-07-01 10:00',
-            userName: 'John Doe',
-            machineName: 'Machine A',
-            sessionId: '123abc',
-        },
-        {
-            id: 2,
-            startDate: '2023-07-02 14:30',
-            endDate: '2023-07-02 15:30',
-            userName: 'Jane Smith',
-            machineName: 'Machine B',
-            sessionId: '456def',
-        },
-    ]);
+            });
+    }, []);
 
     return (
         <div>
