@@ -47,8 +47,11 @@ const RecordList = () => {
                 <TableBody>
                     {records.map((record) => (
                         <TableRow key={record.id}>
+
                             <TableCell>
-                                <IconButton onClick={() => navigate(`/player/${record.sessionId}`)}>
+                                <IconButton onClick={() => {
+                                    navigate("/player", { state: { sessionid: record.sessionId } })
+                                }}>
                                     <SmartDisplayIcon fontSize="large" />
                                 </IconButton>
                             </TableCell>

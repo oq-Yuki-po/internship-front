@@ -7,9 +7,12 @@ import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
 import ProcessSensor from './ProcessSensor';
 import PortSensor from './PortSensor';
 import DriveSensor from './DriveSensor';
+import { useLocation } from "react-router-dom"
 
 const Player = () => {
-    const { sessionId } = useParams();
+    const location = useLocation()
+    //const { sessionId } = useParams();
+    const { sessionId } = location.state.sessionid;
     const [frameNumber, setFrameNumber] = useState(1);
     const [frameData, setFrameData] = useState('');
     const [countOfExpandComponent, setcountOfExpandComponent] = useState(0);
@@ -21,9 +24,9 @@ const Player = () => {
 
     const queryFrame = async (frameNo) => {
         try {
-            //const response = await axios.get(`/api/frames/${sessionId}/${frameNo}`);
-            //const { frame } = response.data;
-            //setImageData(frame);
+            const response = await axios.get(`/api/frames/${sessionId}/${frameNumber}`);
+            const { frame } = response.data;
+            setFrameData(frame);
         } catch (error) {
             console.error('Error querying frame:', error);
         }
@@ -134,8 +137,8 @@ const Player = () => {
             <h1>記録再生画面</h1>
             <div style={{ display: 'flex', height: '75vh' }}>
                 <div style={{ flexBasis: '50%', padding: '20px' }}>
-                    {/* <img src={`data:image/png;base64, ${frame.screen.imageData}`} alt="Frame" /> */}
-                    <img src={`data:image/png;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD`} alt="Frame" />
+                    <img src={`data:image/png;base64, ${frameData.screen.imageData}`} alt="Frame" />
+                    {/*<img src={`data:image/png;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD`} alt="Frame" />*/}
                     <div></div>
                     <IconButton onClick={handlePreviousFrame}>
                         <SkipPreviousIcon fontSize='Large' />
@@ -145,9 +148,9 @@ const Player = () => {
                     </IconButton>
                 </div>
                 <div style={{ flexBasis: '50%', padding: '20px' }} ref={ref}>
-                    <ProcessSensor processes={processes} maxHeight={sensorMaxHeight} onChange={switchedDisplayTable} />
-                    <PortSensor ports={ports} maxHeight={sensorMaxHeight} onChange={switchedDisplayTable} />
-                    <DriveSensor drives={drives} maxHeight={sensorMaxHeight} onChange={switchedDisplayTable} />
+                    <ProcessSensor processes={frameData.processes} maxHeight={sensorMaxHeight} onChange={switchedDisplayTable} />
+                    <PortSensor ports={frameData.ports} maxHeight={sensorMaxHeight} onChange={switchedDisplayTable} />
+                    <DriveSensor drives={frameData.drives} maxHeight={sensorMaxHeight} onChange={switchedDisplayTable} />
                 </div>
             </div>
         </Box>

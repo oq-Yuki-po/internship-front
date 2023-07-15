@@ -1,4 +1,3 @@
-import './App.css';
 import {
   BrowserRouter as Router,
   Routes,
@@ -19,7 +18,7 @@ function App() {
         <Routes>
           <Route path="/" element={<RecordList />} />
           <Route path="/reports" element={<Report />} />
-          <Route path="/player/:sessionId" element={<Player />} />
+          <Route path="/player" element={<Player />} />
         </Routes>
       </Box>
     </Router>

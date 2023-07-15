@@ -14,7 +14,7 @@ export default function Header() {
 
     return (
         <Box sx={{ flexGrow: 1, minHeight: '7%' }}>
-            <AppBar position='static'>
+            <AppBar position='static' color='primary'>
                 <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Typography variant="h5"
                         color="inherit"
