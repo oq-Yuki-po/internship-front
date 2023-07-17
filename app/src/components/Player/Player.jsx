@@ -1,121 +1,164 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Box, Button, IconButton } from '@mui/material';
-import SkipNextIcon from '@mui/icons-material/SkipNext';
-import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
-import ProcessSensor from './ProcessSensor';
-import PortSensor from './PortSensor';
-import DriveSensor from './DriveSensor';
+import { Box, Table, Typography, TableCell, TableBody, TableHead, TableRow, TableContainer, IconButton } from '@mui/material';
 import { useLocation } from "react-router-dom"
+import DeleteIcon from '@mui/icons-material/Delete';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const Player = () => {
     const location = useLocation()
-    //const { sessionId } = useParams();
     const sessionId = location.state.sessionId;
     const [frameNumber, setFrameNumber] = useState(1);
     const [frameData, setFrameData] = useState('');
-    const [countOfExpandComponent, setcountOfExpandComponent] = useState(0);
-    const [imageData, setImageData] = useState(`/9j/4AAQSkZJRgABAQEAAAAAAAD`);
+    const [image, setImage] = useState('');
+    const [driveSensors, setDriveSensors] = useState([]);
+    const [ipPortSensors, setIpPortSensors] = useState([]);
+    const [processSensors, setProcessSensors] = useState([]);
 
-    const queryFrame = (frameNo) => {
-        console.log(location);
-        console.log(sessionId);
+    function getFrame() {
         axios.get(`http://localhost:8000/frames/${sessionId}/${frameNumber}`)
             .then(response => {
-                const frame = response.data;
-                setFrameData(frame);
-                setImageData(frame.screenshot_sensor.image);
-                console.log(frame);
+                setFrameData(response.data);
+                const screenshotSensor = response.data.screenshot_sensor;
+                const driveSensors = response.data.drive_sensors;
+                const ipPortSensors = response.data.ip_port_sensors;
+                const processSensors = response.data.process_sensors;
+                setImage(screenshotSensor.image);
+                setDriveSensors(driveSensors);
+                setIpPortSensors(ipPortSensors);
+                setProcessSensors(processSensors);
+                setFrameData(response.data.record_time);
             }).catch(error => {
                 console.error('Error querying frame:', error);
             });
-    };
-
-    const handleNextFrame = () => {
-        const nextFrame = frameNumber + 1;
-        setFrameNumber(nextFrame);
-        queryFrame(nextFrame);
-    };
-
-    const handlePreviousFrame = () => {
-        if (frameNumber > 1) {
-            const previousFrame = frameNumber - 1;
-            setFrameNumber(previousFrame);
-            queryFrame(previousFrame);
-        }
-    };
-
-    var countSensorComponent = 3;
-    const switchedDisplayTable = (nextState) => {
-
-        var nextCountOfExpandComponent = countOfExpandComponent;
-        nextCountOfExpandComponent += nextState ? 1 : -1;
-        nextCountOfExpandComponent = Math.max(0, Math.min(3, nextCountOfExpandComponent));
-        console.log("nextCountOfExpandComponent:", nextCountOfExpandComponent);
-        var nextheight = CurrentHight / nextCountOfExpandComponent;
-        console.log("bottomMargin:", CurrentHight);
-        console.log("nextheight:", nextheight);
-        setsensorMaxHeight(nextheight);
-        setcountOfExpandComponent(nextCountOfExpandComponent);
-    };
-
-    const ref = useRef(null);
-    const [CurrentHight, setCurrentHight] = useState(0);
-
+    }
     useEffect(() => {
-        if (frameData.length > 0) {
-            console.log(frameData.screenshot_sensor.image);
-            setImageData(frameData.screenshot_sensor.image);
-        }
-    }, [frameData]);
-
-    useEffect(() => {
-        const handleResize = () => {
-            /*const parentHeight = ref.current.parentElement.offsetHeight;
-            const elementHeight = ref.current.offsetHeight;*/
-            console.log("ref.current.parentElement.offsetHeight:", ref.current.parentElement.offsetHeight);
-            console.log("ref.current.offsetHeight:", ref.current.offsetHeight);
-            setCurrentHight(ref.current.parentElement.offsetHeight);
-            setsensorMaxHeight(ref.current.parentElement.offsetHeight / countOfExpandComponent);
-        };
-
-        // 初回表示時に1フレーム目の情報をクエリする
-        queryFrame(frameNumber);
-
-        handleResize(); // 初回レンダリング時にマージンを計算
-
-        window.addEventListener('resize', handleResize);
-
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
+        getFrame();
     }, []);
-    //const [bottomMargin, setBottomMargin] = useState(0);
-    const [sensorMaxHeight, setsensorMaxHeight] = useState(65);
+
+    useEffect(() => {
+        getFrame();
+    }, [frameNumber]);
+
+    function handleOnClickBack() {
+        if (frameNumber > 1) {
+            setFrameNumber(frameNumber - 1)
+        }
+    }
+
+    function handleOnClickForward() {
+        setFrameNumber(frameNumber + 1)
+    }
 
     return (
-        <Box>
-            <h1>記録再生画面</h1>
-            <div style={{ display: 'flex', height: '75vh' }}>
-                <div style={{ flexBasis: '50%', padding: '20px' }}>
-                    <img src={`data:image/png;base64, ${imageData}`} alt="Frame" />
-                    {/*<img src={`data:image/png;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD`} alt="Frame" />*/}
-                    <div></div>
-                    <IconButton onClick={handlePreviousFrame}>
-                        <SkipPreviousIcon fontSize='Large' />
+        <Box display="flex" flexDirection="row">
+            <Box m={2} maxWidth="50%" width={"50%"}>
+                <Typography variant="h4" gutterBottom>
+                    Screen
+                </Typography>
+                {image && <img src={`data:image/png;base64, ${image}`} alt="Frame" width={"100%"} />}
+                <Box display="flex" flexDirection="row" justifyContent="space-between">
+                    <IconButton onClick={handleOnClickBack}>
+                        <ArrowBackIcon sx={{ fontSize: "2.5rem" }} />
                     </IconButton>
-                    <IconButton onClick={handleNextFrame}>
-                        <SkipNextIcon fontSize='Large' />
+                    <Typography variant="h5" m={3}>
+                        {frameData}
+                    </Typography>
+                    <IconButton onClick={handleOnClickForward}>
+                        <ArrowForwardIcon sx={{ fontSize: "2.5rem" }} />
                     </IconButton>
-                </div>
-                <div style={{ flexBasis: '50%', padding: '20px' }} ref={ref}>
-                    <ProcessSensor processes={frameData.length ? frameData.process_sensors : []} maxHeight={sensorMaxHeight} onChange={switchedDisplayTable} />
-                    <PortSensor ports={frameData.length ? frameData.ip_port_sensors : []} maxHeight={sensorMaxHeight} onChange={switchedDisplayTable} />
-                    <DriveSensor drives={frameData.length ? frameData.drive_sensors : []} maxHeight={sensorMaxHeight} onChange={switchedDisplayTable} />
-                </div>
-            </div>
-        </Box>
+                </Box>
+            </Box>
+            <Box m={2} maxWidth="50%" width={"50%"} display="flex" flexDirection="column">
+                <Typography variant="h4" component="h4" gutterBottom>
+                    Sensor Info
+                </Typography>
+                <Typography variant='h5' m={1}>
+                    Drive Sensors
+                </Typography>
+                <TableContainer style={{ maxHeight: "25vh" }}>
+                    <Table stickyHeader>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Drive Letter</TableCell>
+                                <TableCell>Drive Type</TableCell>
+                                <TableCell>File System</TableCell>
+                                <TableCell>Volume Name</TableCell>
+                                <TableCell>All Space</TableCell>
+                                <TableCell>Free Space</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {driveSensors.map((drive) => (
+                                <TableRow key={drive.drive_letter}>
+                                    <TableCell>{drive.drive_letter}</TableCell>
+                                    <TableCell>{drive.drive_type}</TableCell>
+                                    <TableCell>{drive.file_system}</TableCell>
+                                    <TableCell>{drive.volume_name}</TableCell>
+                                    <TableCell>{drive.all_space}</TableCell>
+                                    <TableCell>{drive.free_space}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <Typography variant='h5' m={1}>
+                    IP Port Sensors
+                </Typography>
+                <TableContainer style={{ maxHeight: "25vh" }}>
+                    <Table stickyHeader>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>State</TableCell>
+                                <TableCell>IP</TableCell>
+                                <TableCell>Port</TableCell>
+                                <TableCell>Process ID</TableCell>
+                                <TableCell>Remote IP</TableCell>
+                                <TableCell>Remote Port</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {ipPortSensors.map((port) => (
+                                <TableRow>
+                                    <TableCell>{port.state}</TableCell>
+                                    <TableCell>{port.ip}</TableCell>
+                                    <TableCell>{port.port}</TableCell>
+                                    <TableCell>{port.process_id}</TableCell>
+                                    <TableCell>{port.remote_ip}</TableCell>
+                                    <TableCell>{port.remote_port}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <Typography variant='h5' m={1}>
+                    Process Sensors
+                </Typography>
+                <TableContainer style={{ maxHeight: "25vh" }}>
+                    <Table stickyHeader>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>File Path</TableCell>
+                                <TableCell>Process ID</TableCell>
+                                <TableCell>Process Name</TableCell>
+                                <TableCell>Started At</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {processSensors.map((process) => (
+                                <TableRow>
+                                    <TableCell>{process.file_path}</TableCell>
+                                    <TableCell>{process.process_id}</TableCell>
+                                    <TableCell>{process.process_name}</TableCell>
+                                    <TableCell>{process.started_at}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Box>
+        </Box >
     );
 };
 

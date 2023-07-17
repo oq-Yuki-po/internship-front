@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
+import { Table, TableHead, TableBody, TableRow, TableCell, Typography, Box } from '@mui/material';
 import SmartDisplayIcon from '@mui/icons-material/SmartDisplay';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -9,20 +8,15 @@ import { IconButton } from '@material-ui/core';
 const RecordList = () => {
     const navigate = useNavigate();
     const [records, setRecords] = useState([]);
-    const fetchRecords = () => {
-        axios.get('http://localhost:8000/user_sessions')
-            .then(response => {
-                //console.trace();
-                console.log('Records:', response.data.user_sessions);
-                setRecords(response.data.user_sessions);
-            }).catch(error => {
-                console.error('Error fetching records:', error);
-            });
-    };
+    const tableHeader = [
+        '再生開始',
+        '記録開始日時',
+        '記録終了日時',
+        'ユーザー名',
+        'マシン名',
+    ]
 
     useEffect(() => {
-        //console.trace();
-        //fetchRecords();
         axios.get('http://localhost:8000/user_sessions')
             .then(response => {
                 setRecords(response.data.user_sessions);
@@ -32,16 +26,16 @@ const RecordList = () => {
     }, []);
 
     return (
-        <div>
-            <h1>Record List</h1>
+        <Box>
+            <Typography variant="h4" component="h4" gutterBottom>
+                Record List
+            </Typography>
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell>再生開始</TableCell>
-                        <TableCell>記録開始日時</TableCell>
-                        <TableCell>記録終了日時</TableCell>
-                        <TableCell>ユーザー名</TableCell>
-                        <TableCell>マシン名</TableCell>
+                        {tableHeader.map((header) => (
+                            <TableCell key={header}>{header}</TableCell>
+                        ))}
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -50,10 +44,9 @@ const RecordList = () => {
 
                             <TableCell>
                                 <IconButton onClick={() => {
-                                    console.log(record.sessionId);
                                     navigate("/player", { state: { sessionId: record.sessionId } })
                                 }}>
-                                    <SmartDisplayIcon fontSize="large" />
+                                    <SmartDisplayIcon fontSize="large" color='error' />
                                 </IconButton>
                             </TableCell>
                             <TableCell>{record.startDate}</TableCell>
@@ -64,7 +57,7 @@ const RecordList = () => {
                     ))}
                 </TableBody>
             </Table>
-        </div >
+        </Box>
     );
 };
 
