@@ -19,10 +19,10 @@ export default function Header() {
                     <Typography variant="h5"
                         color="inherit"
                         component="div"
-                        sx={{ flexGrow: 1, maxWidth: 150 }}
+                        sx={{ flexGrow: 1, maxWidth: 350, cursor: 'pointer' }}
                         onClick={() => navigate('/')}
                         className='title'>
-                        sample app
+                        RECORD PLAYER
                     </Typography>
                     <Box>
                         <NavMenu to='/' title='記録一覧' icon={<ListAltIcon />} />
