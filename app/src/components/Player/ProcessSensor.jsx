@@ -6,10 +6,10 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    Paper,
     Collapse,
     IconButton
 } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@material-ui/icons';
 
 const ProcessSensor = ({ processes, maxHeight, onChange }) => {
@@ -43,15 +43,17 @@ const ProcessSensor = ({ processes, maxHeight, onChange }) => {
                                             <TableCell>プロセス名</TableCell>
                                             <TableCell>プロセスのファイルパス</TableCell>
                                             <TableCell>pid</TableCell>
+                                            <TableCell>開始日時</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
                                         {/* データをマッピングして表示 */}
-                                        {processes.map((process) => (
+                                        {processes.length && processes.map((process) => (
                                             <TableRow key={process.pid}>
-                                                <TableCell>{process.processName}</TableCell>
-                                                <TableCell>{process.filePath}</TableCell>
-                                                <TableCell>{process.pid}</TableCell>
+                                                <TableCell>{process.process_name}</TableCell>
+                                                <TableCell>{process.file_path}</TableCell>
+                                                <TableCell>{process.process_id}</TableCell>
+                                                <TableCell>{process.started_at}</TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>

@@ -6,10 +6,10 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    Paper,
     Collapse,
     IconButton
 } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@material-ui/icons';
 
 const PortSenssor = ({ ports, maxHeight, onChange }) => {
@@ -43,30 +43,30 @@ const PortSenssor = ({ ports, maxHeight, onChange }) => {
                                             <TableCell>Local Port</TableCell>
                                             <TableCell>Local IP Address</TableCell>
                                             <TableCell>Process PID</TableCell>
-                                            <TableCell>Remote Port</TableCell>
-                                            <TableCell>Remote IP Address</TableCell>
+                                            {/* <TableCell>Remote Port</TableCell>
+                                            <TableCell>Remote IP Address</TableCell>*/}
                                             <TableCell>Status</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {ports.map((port) => (
-                                            <TableRow key={port.localPort}>
-                                                <TableCell>{port.localPort}</TableCell>
+                                        {ports.length && ports.map((port) => (
+                                            <TableRow key={port.port}>
+                                                <TableCell>{port.port}</TableCell>
                                                 <TableCell>{port.localIpAddress}</TableCell>
-                                                <TableCell>{port.processPid}</TableCell>
-                                                {port.status === 'ESTABLISH' && (
+                                                <TableCell>{port.process_id}</TableCell>
+                                                {/*port.state === 'ESTABLISH' && (
                                                     <>
-                                                        <TableCell>{port.remotePort}</TableCell>
-                                                        <TableCell>{port.remoteIpAddress}</TableCell>
+                                                        <TableCell>{port.remote_port}</TableCell>
+                                                        <TableCell>{port.remote_ip}</TableCell>
                                                     </>
                                                 )}
-                                                {port.status === 'LISTENING' && (
+                                                {port.state === 'LISTENING' && (
                                                     <>
                                                         <TableCell />
                                                         <TableCell />
                                                     </>
-                                                )}
-                                                <TableCell>{port.status}</TableCell>
+                                                ) */}
+                                                <TableCell>{port.state}</TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>

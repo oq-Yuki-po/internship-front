@@ -12,24 +12,24 @@ import { useLocation } from "react-router-dom"
 const Player = () => {
     const location = useLocation()
     //const { sessionId } = useParams();
-    const { sessionId } = location.state.sessionid;
+    const sessionId = location.state.sessionId;
     const [frameNumber, setFrameNumber] = useState(1);
     const [frameData, setFrameData] = useState('');
     const [countOfExpandComponent, setcountOfExpandComponent] = useState(0);
+    const [imageData, setImageData] = useState(`/9j/4AAQSkZJRgABAQEAAAAAAAD`);
 
-    useEffect(() => {
-        // 初回表示時に1フレーム目の情報をクエリする
-        queryFrame(frameNumber);
-    }, []);
-
-    const queryFrame = async (frameNo) => {
-        try {
-            const response = await axios.get(`/api/frames/${sessionId}/${frameNumber}`);
-            const { frame } = response.data;
-            setFrameData(frame);
-        } catch (error) {
-            console.error('Error querying frame:', error);
-        }
+    const queryFrame = (frameNo) => {
+        console.log(location);
+        console.log(sessionId);
+        axios.get(`http://localhost:8000/frames/${sessionId}/${frameNumber}`)
+            .then(response => {
+                const frame = response.data;
+                setFrameData(frame);
+                setImageData(frame.screenshot_sensor.image);
+                console.log(frame);
+            }).catch(error => {
+                console.error('Error querying frame:', error);
+            });
     };
 
     const handleNextFrame = () => {
@@ -45,54 +45,6 @@ const Player = () => {
             queryFrame(previousFrame);
         }
     };
-
-    // ダミーデータ
-    const processes = [
-        {
-            processName: 'Process 1',
-            filePath: '/path/to/process1',
-            pid: 123,
-        },
-        {
-            processName: 'Process 2',
-            filePath: '/path/to/process2',
-            pid: 456,
-        },
-    ];
-
-    const ports = [
-        {
-            localPort: 8080,
-            localIpAddress: '127.0.0.1',
-            processPid: 123,
-            remotePort: 0,
-            remoteIpAddress: '0.0.0.0',
-            status: 'LISTENING',
-        },
-        {
-            localPort: 1234,
-            localIpAddress: '127.0.0.1',
-            processPid: 456,
-            remotePort: 5678,
-            remoteIpAddress: '192.168.0.1',
-            status: 'ESTABLISH',
-        },
-    ];
-
-    const drives = [
-        {
-            driveLetter: 'C:',
-            driveType: 'Internal Disk',
-            fileSystem: 'NTFS',
-            volumeLabel: 'System Drive',
-        },
-        {
-            driveLetter: 'D:',
-            driveType: 'Removable Disk',
-            fileSystem: 'FAT32',
-            volumeLabel: '',
-        },
-    ];
 
     var countSensorComponent = 3;
     const switchedDisplayTable = (nextState) => {
@@ -112,6 +64,13 @@ const Player = () => {
     const [CurrentHight, setCurrentHight] = useState(0);
 
     useEffect(() => {
+        if (frameData.length > 0) {
+            console.log(frameData.screenshot_sensor.image);
+            setImageData(frameData.screenshot_sensor.image);
+        }
+    }, [frameData]);
+
+    useEffect(() => {
         const handleResize = () => {
             /*const parentHeight = ref.current.parentElement.offsetHeight;
             const elementHeight = ref.current.offsetHeight;*/
@@ -120,6 +79,9 @@ const Player = () => {
             setCurrentHight(ref.current.parentElement.offsetHeight);
             setsensorMaxHeight(ref.current.parentElement.offsetHeight / countOfExpandComponent);
         };
+
+        // 初回表示時に1フレーム目の情報をクエリする
+        queryFrame(frameNumber);
 
         handleResize(); // 初回レンダリング時にマージンを計算
 
@@ -137,7 +99,7 @@ const Player = () => {
             <h1>記録再生画面</h1>
             <div style={{ display: 'flex', height: '75vh' }}>
                 <div style={{ flexBasis: '50%', padding: '20px' }}>
-                    <img src={`data:image/png;base64, ${frameData.screen.imageData}`} alt="Frame" />
+                    <img src={`data:image/png;base64, ${imageData}`} alt="Frame" />
                     {/*<img src={`data:image/png;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD`} alt="Frame" />*/}
                     <div></div>
                     <IconButton onClick={handlePreviousFrame}>
@@ -148,9 +110,9 @@ const Player = () => {
                     </IconButton>
                 </div>
                 <div style={{ flexBasis: '50%', padding: '20px' }} ref={ref}>
-                    <ProcessSensor processes={frameData.processes} maxHeight={sensorMaxHeight} onChange={switchedDisplayTable} />
-                    <PortSensor ports={frameData.ports} maxHeight={sensorMaxHeight} onChange={switchedDisplayTable} />
-                    <DriveSensor drives={frameData.drives} maxHeight={sensorMaxHeight} onChange={switchedDisplayTable} />
+                    <ProcessSensor processes={frameData.length ? frameData.process_sensors : []} maxHeight={sensorMaxHeight} onChange={switchedDisplayTable} />
+                    <PortSensor ports={frameData.length ? frameData.ip_port_sensors : []} maxHeight={sensorMaxHeight} onChange={switchedDisplayTable} />
+                    <DriveSensor drives={frameData.length ? frameData.drive_sensors : []} maxHeight={sensorMaxHeight} onChange={switchedDisplayTable} />
                 </div>
             </div>
         </Box>

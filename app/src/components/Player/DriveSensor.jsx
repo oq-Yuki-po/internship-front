@@ -6,10 +6,10 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    Paper,
     Collapse,
     IconButton
 } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@material-ui/icons';
 
 const DriveSensor = ({ drives, maxHeight, onChange }) => {
@@ -44,15 +44,20 @@ const DriveSensor = ({ drives, maxHeight, onChange }) => {
                                             <TableCell>Drive Type</TableCell>
                                             <TableCell>File System</TableCell>
                                             <TableCell>Volume Label</TableCell>
+                                            <TableCell>All Space</TableCell>
+                                            <TableCell>Free Space</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {drives.map((drive) => (
-                                            <TableRow key={drive.driveLetter}>
-                                                <TableCell>{drive.driveLetter}</TableCell>
-                                                <TableCell>{drive.driveType}</TableCell>
-                                                <TableCell>{drive.fileSystem}</TableCell>
-                                                <TableCell>{drive.volumeLabel}</TableCell>
+                                        {drives.length && drives.map((drive) => (
+
+                                            <TableRow key={drive.drive_letter}>
+                                                <TableCell>{drive.drive_letter}</TableCell>
+                                                <TableCell>{drive.drive_type}</TableCell>
+                                                <TableCell>{drive.file_system}</TableCell>
+                                                <TableCell>{drive.volume_name}</TableCell>
+                                                <TableCell>{drive.all_space}</TableCell>
+                                                <TableCell>{drive.free_space}</TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>

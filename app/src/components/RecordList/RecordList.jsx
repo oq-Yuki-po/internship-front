@@ -13,7 +13,7 @@ const RecordList = () => {
         axios.get('http://localhost:8000/user_sessions')
             .then(response => {
                 //console.trace();
-                //console.log('Records:', response.data.user_sessions);
+                console.log('Records:', response.data.user_sessions);
                 setRecords(response.data.user_sessions);
             }).catch(error => {
                 console.error('Error fetching records:', error);
@@ -50,7 +50,8 @@ const RecordList = () => {
 
                             <TableCell>
                                 <IconButton onClick={() => {
-                                    navigate("/player", { state: { sessionid: record.sessionId } })
+                                    console.log(record.sessionId);
+                                    navigate("/player", { state: { sessionId: record.sessionId } })
                                 }}>
                                     <SmartDisplayIcon fontSize="large" />
                                 </IconButton>
@@ -63,7 +64,7 @@ const RecordList = () => {
                     ))}
                 </TableBody>
             </Table>
-        </div>
+        </div >
     );
 };
 
